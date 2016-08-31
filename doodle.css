@@ -73,3 +73,20 @@ background-color: #434343;
 
 background: #818181;
 }
+
+
+
+#new{
+float: right;
+margin-right: 20px;
+height: 30px;
+padding: 8px;
+background-color: #434343;
+
+}
+
+#new:hover{
+
+background: #818181;
+}
+

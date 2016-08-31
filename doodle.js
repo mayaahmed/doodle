@@ -31,7 +31,12 @@ var setRadius=function(newRadius){
   radSpan.innerHTML=radius;
 }
 
-  
+ var  newButton = document.getElementById('new');
+newButton.addEventListener('click', function(){
+    context.clearRect(0,0,canvas.width,canvas.height);
+});  
+
+ 
 
 
 var minRad=0.5, maxRad=100, defaultRad=10, interval=5;
@@ -45,17 +50,21 @@ incRad.addEventListener('click',function(){
       setRadius(radius+interval); });
 setRadius(defaultRad);
 
+
 var putPoint=function(e){
+var rect = canvas.getBoundingClientRect();  // absolute position of canvas
   if(dragging){
-    context.lineTo(e.clientX, e.clientY);
+    context.lineTo(e.clientX- rect.left, e.clientY- rect.top);
     context.stroke();
   context.beginPath();
-  context.arc(e.clientX, e.clientY, radius, 0, Math.PI*2);
+  context.arc(e.clientX- rect.left, e.clientY- rect.top, radius, 0, Math.PI*2);
   context.fill();
   context.beginPath();
-  context.moveTo(e.clientX, e.clientY);
+  context.moveTo(e.clientX- rect.left, e.clientY- rect.top);
   }
 }
+
+
 
   var engage = function(e){
     dragging=true;
