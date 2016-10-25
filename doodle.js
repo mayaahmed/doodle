@@ -1,21 +1,24 @@
 var canvas = document.getElementById('canvas');
 var context=canvas.getContext('2d');
 
+
+function init(){
+  if (localStorage.savedCanvas){ 
+    var dataURL = JSON.parse(localStorage.savedCanvas);
+    var img = new Image;
+    img.src = dataURL;
+    img.onload = function () {
+      context.drawImage(img, 0, 0);
+    };
+  }
+}
+
+
+
+
 canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
 
-/*
-window.onresize = function(){
-var image=  context.getImageData(0,0,canvas.width, canvas.height);
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
-context.putImageData(image,0,0);
-}
-
-  function clearCanvas(canvas){
-    canvas.width=canvas.width;
-}
-*/
 
 var radius=10;
 context.lineWidth=radius*2;
@@ -39,7 +42,7 @@ newButton.addEventListener('click', function(){
  
 
 
-var minRad=0.5, maxRad=100, defaultRad=10, interval=5;
+var minRad=0.5, maxRad=100, defaultRad=3, interval=1;
 var radSpan=document.getElementById('radval');
 var decRad=document.getElementById('decrad');
 var  incRad=document.getElementById('incrad');
@@ -59,8 +62,20 @@ var rect = canvas.getBoundingClientRect();  // absolute position of canvas
   context.beginPath();
   context.arc(e.clientX- rect.left, e.clientY- rect.top, radius, 0, Math.PI*2);
   context.fill();
+
+  localStorage.savedCanvas =JSON.stringify(canvas.toDataURL());
   context.beginPath();
   context.moveTo(e.clientX- rect.left, e.clientY- rect.top);
+  }
+}
+
+var erasePoint=function(e){
+ 
+var rect = canvas.getBoundingClientRect();  // absolute position of canvas
+  if(dragging){
+
+    context.clearRect(e.clientX- rect.left, e.clientY- rect.top,20,20);
+    context.moveTo(e.clientX- rect.left, e.clientY- rect.top);
   }
 }
 
@@ -68,7 +83,8 @@ var rect = canvas.getBoundingClientRect();  // absolute position of canvas
 
   var engage = function(e){
     dragging=true;
-    putPoint(e);
+    if(pen==0)  putPoint(e);
+    else if(pen==1)  erasePoint(e);
   }
 
 var disengage = function(){
@@ -76,22 +92,22 @@ var disengage = function(){
     context.beginPath();
   }
 
-canvas.addEventListener("mousedown",engage);
-canvas.addEventListener("mousemove",putPoint);
-canvas.addEventListener("mouseup",disengage);
+var pen=0;
+check();
 
-/*
-function doFirst(){
-  var x = document.getElementById('canvas'); 
-  canvas=x.getContext('2d');
-   window.addEventListener("mousemove",bucky,false);
+function changePen(){
+  pen=1;
+  alert(pen); check();
 }
 
 
-function bucky(e){
-  //  canvas.clearRect(0,0,1000,400); //clear entire canvas
-  var xPos=e.clientX;
-  var yPos=e.clientY;
-  canvas.fillRect(xPos-5,yPos-5,10,10);
-  }window.addEventListener("load",doFirst,false);
-*/
+function check(){
+canvas.addEventListener("mousedown",engage);
+canvas.addEventListener("mouseup",disengage);
+
+if(pen==0){
+canvas.addEventListener("mousemove",putPoint);
+}
+if(pen==1)
+canvas.addEventListener("mousemove",erasePoint);
+} 
